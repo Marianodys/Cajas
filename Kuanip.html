@@ -92,6 +92,51 @@ button { width:100%; padding:10px; margin-top:10px; }
 
 <button onclick="cerrar()">Cerrar turno</button>
 
+<!-- ===== TICKET ===== -->
+<div id="ticket" style="display:none; font-family: monospace; font-size:12px; width:280px;">
+
+  <div style="text-align:center;">
+    <img src="https://marianodys.github.io/Cajas/Para_encabezado.jpg" style="width:200px;"><br>
+    <b>DULCE Y SALADO</b><br>
+    <span id="t_caja"></span><br>
+    <span id="t_turno"></span><br>
+    <span id="t_fecha"></span>
+  </div>
+
+  <hr>
+
+  <b>Responsable:</b><br>
+  <span id="t_resp"></span>
+
+  <hr>
+
+  <b>SALDOS</b><br>
+  Inicial: <span id="t_si"></span><br>
+  Final: <span id="t_sf"></span>
+
+  <hr>
+
+  <b>TOTALES</b><br>
+  Caja: <span id="t_tc"></span><br>
+  Cobros: <span id="t_tco"></span><br>
+  Gastos: <span id="t_tg"></span>
+
+  <hr>
+
+  <div style="text-align:center;">
+    <b id="t_estado" style="font-size:14px;"></b><br>
+    <b>Diferencia: <span id="t_dif"></span></b>
+  </div>
+
+  <hr>
+
+  <div style="text-align:center;">
+    --- Cierre de turno ---<br>
+    Sistema interno
+  </div>
+
+</div>
+
 <script>
 
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxGfTOvHMNXGB1p8OibVcH7MDCAVwiYAmrlz-kN1PF8DWlTUlnNdJhhpUBNbOe9BtVIzA/exec";
@@ -112,12 +157,11 @@ function set(id,val){
   document.getElementById(id).value = formatMoney(val);
 }
 
-function calcTarjetas(prefix){
-  return num("master"+prefix)+num("prepagaMaster"+prefix)+num("mcdebit"+prefix)+num("visa"+prefix)+num("visadeb"+prefix)+num("prepagaVisa"+prefix)+num("amex"+prefix)+num("qr"+prefix);
+function calcTarjetas(p){
+  return num("master"+p)+num("prepagaMaster"+p)+num("mcdebit"+p)+num("visa"+p)+num("visadeb"+p)+num("prepagaVisa"+p)+num("amex"+p)+num("qr"+p);
 }
 
 function calcular(){
-
   const totalCaja = num("importeX") - num("empleados") - num("pedidosYa");
   set("totalCaja", totalCaja);
 
@@ -164,14 +208,62 @@ function bloquear(){
   document.querySelectorAll("input").forEach(i => i.disabled = true);
 }
 
+function llenarTicket(data){
+
+  const f = new Date();
+  const dif = (data.saldoFinal - data.saldoInicial) + data.totalGastos + data.totalCobros - data.totalCaja;
+
+  let estado = "SIN DIFERENCIA";
+  if (dif > 0) estado = "SOBRANTE";
+  if (dif < 0) estado = "FALTANTE";
+
+  document.getElementById("t_caja").innerText = data.caja;
+  document.getElementById("t_turno").innerText = data.turno;
+  document.getElementById("t_fecha").innerText = f.toLocaleString();
+
+  document.getElementById("t_resp").innerText = data.responsable1;
+
+  document.getElementById("t_si").innerText = formatMoney(data.saldoInicial);
+  document.getElementById("t_sf").innerText = formatMoney(data.saldoFinal);
+
+  document.getElementById("t_tc").innerText = formatMoney(data.totalCaja);
+  document.getElementById("t_tco").innerText = formatMoney(data.totalCobros);
+  document.getElementById("t_tg").innerText = formatMoney(data.totalGastos);
+
+  document.getElementById("t_dif").innerText = formatMoney(dif);
+  document.getElementById("t_estado").innerText = estado;
+}
+
+function imprimirTicket(){
+  const contenido = document.getElementById("ticket").innerHTML;
+
+  const win = window.open('', '', 'width=300,height=600');
+
+  win.document.write(`
+    <html>
+    <head>
+      <style>
+        body { font-family: monospace; width:280px; margin:0; }
+      </style>
+    </head>
+    <body>${contenido}</body>
+    </html>
+  `);
+
+  win.document.close();
+  win.focus();
+  win.print();
+  win.close();
+}
+
 function enviar(data){
   fetch(SCRIPT_URL,{
     method:"POST",
     body: JSON.stringify(data)
   }).then(()=>{
-    alert("Cierre guardado");
+    llenarTicket(data);
     bloquear();
-    window.print();
+    imprimirTicket();
   });
 }
 
@@ -191,9 +283,7 @@ function cerrar(){
   };
 
   if(turno()==="Bloqueado"){
-
     const clave = prompt("Ingrese clave:");
-
     fetch(SCRIPT_URL + "?tipo=clave")
     .then(r=>r.json())
     .then(d=>{
@@ -203,7 +293,6 @@ function cerrar(){
         alert("Clave incorrecta");
       }
     });
-
     return;
   }
 
