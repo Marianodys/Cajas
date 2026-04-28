@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Cierre de Caja</title>
+
+<style>
+body { font-family: Arial; max-width: 420px; margin:auto; }
+h3 { border-bottom:1px solid #ccc; }
+input { width:100%; margin:4px 0; padding:6px; }
+.total { font-weight:bold; background:#eee; }
+button { width:100%; padding:10px; margin-top:10px; }
+</style>
+
+</head>
+
+<body>
+
+<h2 id="titulo"></h2>
+
+<h3>Responsables</h3>
+<input id="responsable1" placeholder="Responsable">
+<input id="responsable2" placeholder="Responsable 2 (solo Kuanip)">
+
+<h3>Saldos</h3>
+<input id="saldoInicial" placeholder="Saldo inicial">
+<input id="saldoFinal" placeholder="Saldo final">
+
+<h3>Operación</h3>
+<input id="tickets" placeholder="Cantidad tickets">
+<input id="importeX" placeholder="Importe X">
+<input id="empleados" placeholder="Cta cte empleados">
+<input id="pedidosYa" placeholder="Pedidos Ya">
+
+<input id="totalCaja" class="total" placeholder="Total caja" readonly>
+
+<h3>Tarjetas</h3>
+<input id="master" placeholder="Master">
+<input id="maestro" placeholder="Maestro">
+<input id="mcdebit" placeholder="MC Debit">
+<input id="visa" placeholder="Visa">
+<input id="visadeb" placeholder="Visa Débito">
+<input id="amex" placeholder="Amex">
+<input id="qr" placeholder="QR">
+<input id="otras" placeholder="Otras">
+
+<input id="subtotalTarjetas" class="total" placeholder="Subtotal tarjetas" readonly>
+
+<h3>Otros cobros</h3>
+<input id="transferencias" placeholder="Transferencias">
+<input id="efectivo" placeholder="Efectivo">
+
+<input id="totalCobros" class="total" placeholder="Total cobros" readonly>
+
+<h3>Gastos</h3>
+<input id="gasto1_desc" placeholder="Descripción gasto 1">
+<input id="gasto1" placeholder="Importe">
+
+<input id="gasto2_desc" placeholder="Descripción gasto 2">
+<input id="gasto2" placeholder="Importe">
+
+<input id="totalGastos" class="total" placeholder="Total gastos" readonly>
+
+<h3>Resultado</h3>
+<input id="diferencia" class="total" placeholder="Diferencia" readonly>
+
+<button onclick="cerrar()">Cerrar turno</button>
+
+<script>
+
+const CAJA = location.pathname.replace("/", "").replace(".html", "");
+document.getElementById("titulo").innerText = "Caja " + CAJA;
+
+function num(id){ return parseFloat(document.getElementById(id).value) || 0; }
+
+function calcular(){
+
+  const totalCaja = num("importeX") - num("empleados") - num("pedidosYa");
+  document.getElementById("totalCaja").value = totalCaja;
+
+  const tarjetas = num("master")+num("maestro")+num("mcdebit")+num("visa")+num("visadeb")+num("amex")+num("qr")+num("otras");
+  document.getElementById("subtotalTarjetas").value = tarjetas;
+
+  const totalCobros = tarjetas + num("transferencias") + num("efectivo");
+  document.getElementById("totalCobros").value = totalCobros;
+
+  const gastos = num("gasto1") + num("gasto2");
+  document.getElementById("totalGastos").value = gastos;
+
+  const difSaldo = num("saldoFinal") - num("saldoInicial");
+  const diferencia = difSaldo + gastos + totalCobros - totalCaja;
+
+  document.getElementById("diferencia").value = diferencia;
+}
+
+document.querySelectorAll("input").forEach(i => i.addEventListener("input", calcular));
+
+function turno(){
+  const h = new Date().getHours();
+  if (h>=7 && h<=17) return "Mañana";
+  if (h>=20 || h<=0) return "Tarde";
+  return "Bloqueado";
+}
+
+function cerrar(){
+
+  if(turno()==="Bloqueado"){
+    alert("Horario no permitido");
+    return;
+  }
+
+  const data = {
+    caja: CAJA,
+    turno: turno(),
+    responsable1: document.getElementById("responsable1").value,
+    responsable2: document.getElementById("responsable2").value,
+    saldoInicial: num("saldoInicial"),
+    saldoFinal: num("saldoFinal"),
+    tickets: num("tickets"),
+    totalCaja: num("totalCaja"),
+    totalCobros: num("totalCobros"),
+    totalGastos: num("totalGastos")
+  };
+
+  fetch("https://script.google.com/macros/s/AKfycbzw9M16mqewcMszI1Mey0JduVLSnSH90lxGQN7UgYXUoApVjicxSofUxtjHDvuQs6zVeg/exec", {
+    method: "POST",
+    body: JSON.stringify(data)
+  })
+  .then(()=>{
+    alert("Cierre guardado");
+    window.print();
+  });
+
+}
+
+</script>
+
+</body>
+</html>
