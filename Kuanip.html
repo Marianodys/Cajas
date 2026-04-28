@@ -98,42 +98,35 @@ button { width:100%; padding:10px; margin-top:10px; }
   <div style="text-align:center;">
     <img src="https://marianodys.github.io/Cajas/Para_encabezado.jpg" style="width:200px;"><br>
     <b>DULCE Y SALADO</b><br>
-    <span id="t_caja"></span><br>
-    <span id="t_turno"></span><br>
     <span id="t_fecha"></span>
   </div>
 
   <hr>
 
-  <b>Responsable:</b><br>
-  <span id="t_resp"></span>
+  Caja: <span id="t_caja"></span><br>
+  Turno: <span id="t_turno"></span><br>
+  Responsable: <span id="t_resp"></span><br>
+  Tickets: <span id="t_tickets"></span><br>
 
   <hr>
 
-  <b>SALDOS</b><br>
-  Inicial: <span id="t_si"></span><br>
-  Final: <span id="t_sf"></span>
+  Total X: <span id="t_tx"></span><br>
+  Cta Cte: <span id="t_cta"></span><br>
+  Total Caja: <span id="t_tc"></span><br>
 
   <hr>
 
-  <b>TOTALES</b><br>
-  Caja: <span id="t_tc"></span><br>
-  Cobros: <span id="t_tco"></span><br>
-  Gastos: <span id="t_tg"></span>
+  Total Cobros: <span id="t_tco"></span><br>
+  Gastos: <span id="t_tg"></span><br>
 
   <hr>
 
-  <div style="text-align:center;">
-    <b id="t_estado" style="font-size:14px;"></b><br>
-    <b>Diferencia: <span id="t_dif"></span></b>
-  </div>
+  <b>Diferencia: <span id="t_dif"></span></b><br>
+  <b id="t_estado"></b>
 
   <hr>
 
-  <div style="text-align:center;">
-    --- Cierre de turno ---<br>
-    Sistema interno
-  </div>
+</div>
 
 </div>
 
@@ -210,23 +203,28 @@ function bloquear(){
 
 function llenarTicket(data){
 
-  const f = new Date();
+  const now = new Date();
+
   const dif = (data.saldoFinal - data.saldoInicial) + data.totalGastos + data.totalCobros - data.totalCaja;
 
   let estado = "SIN DIFERENCIA";
   if (dif > 0) estado = "SOBRANTE";
   if (dif < 0) estado = "FALTANTE";
 
+  const totalX = num("importeX");
+  const ctaCte = num("empleados") + num("pedidosYa");
+
+  document.getElementById("t_fecha").innerText = now.toLocaleString();
+
   document.getElementById("t_caja").innerText = data.caja;
   document.getElementById("t_turno").innerText = data.turno;
-  document.getElementById("t_fecha").innerText = f.toLocaleString();
-
   document.getElementById("t_resp").innerText = data.responsable1;
+  document.getElementById("t_tickets").innerText = data.tickets;
 
-  document.getElementById("t_si").innerText = formatMoney(data.saldoInicial);
-  document.getElementById("t_sf").innerText = formatMoney(data.saldoFinal);
-
+  document.getElementById("t_tx").innerText = formatMoney(totalX);
+  document.getElementById("t_cta").innerText = formatMoney(ctaCte);
   document.getElementById("t_tc").innerText = formatMoney(data.totalCaja);
+
   document.getElementById("t_tco").innerText = formatMoney(data.totalCobros);
   document.getElementById("t_tg").innerText = formatMoney(data.totalGastos);
 
