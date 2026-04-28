@@ -5,13 +5,20 @@
 <title>Cierre de Caja</title>
 
 <style>
-body { font-family: Arial; max-width: 420px; margin:auto; }
+body { font-family: Arial; max-width: 480px; margin:auto; }
 h3 { border-bottom:1px solid #ccc; }
-input { width:100%; margin:4px 0; padding:6px; }
+
+.row { display:flex; align-items:center; margin:4px 0; }
+label { width:180px; font-size:14px; }
+input { flex:1; padding:6px; }
+
 .total { font-weight:bold; background:#eee; }
+
+.tarjetas { display:flex; gap:10px; }
+.col { flex:1; border:1px solid #ccc; padding:5px; }
+
 button { width:100%; padding:10px; margin-top:10px; }
 </style>
-
 </head>
 
 <body>
@@ -19,118 +26,250 @@ button { width:100%; padding:10px; margin-top:10px; }
 <h2 id="titulo"></h2>
 
 <h3>Responsables</h3>
-<input id="responsable1" placeholder="Responsable">
-<input id="responsable2" placeholder="Responsable 2 (solo Kuanip)">
+<div class="row"><label>Responsable</label><input id="responsable1"></div>
+<div class="row"><label>Responsable 2</label><input id="responsable2"></div>
 
 <h3>Saldos</h3>
-<input id="saldoInicial" placeholder="Saldo inicial">
-<input id="saldoFinal" placeholder="Saldo final">
+<div class="row"><label>Saldo inicial</label><input id="saldoInicial"></div>
+<div class="row"><label>Saldo final</label><input id="saldoFinal"></div>
 
 <h3>Operación</h3>
-<input id="tickets" placeholder="Cantidad tickets">
-<input id="importeX" placeholder="Importe X">
-<input id="empleados" placeholder="Cta cte empleados">
-<input id="pedidosYa" placeholder="Pedidos Ya">
-
-<input id="totalCaja" class="total" placeholder="Total caja" readonly>
+<div class="row"><label>Tickets</label><input id="tickets"></div>
+<div class="row"><label>Total X</label><input id="importeX"></div>
+<div class="row"><label>Cta cte empleados</label><input id="empleados"></div>
+<div class="row"><label>Pedidos Ya</label><input id="pedidosYa"></div>
+<div class="row"><label>Total caja</label><input id="totalCaja" class="total" readonly></div>
 
 <h3>Tarjetas</h3>
-<input id="master" placeholder="Master">
-<input id="maestro" placeholder="Maestro">
-<input id="mcdebit" placeholder="MC Debit">
-<input id="visa" placeholder="Visa">
-<input id="visadeb" placeholder="Visa Débito">
-<input id="amex" placeholder="Amex">
-<input id="qr" placeholder="QR">
-<input id="otras" placeholder="Otras">
+<div class="tarjetas">
 
-<input id="subtotalTarjetas" class="total" placeholder="Subtotal tarjetas" readonly>
+<div class="col">
+<b>Cierre 1</b>
+<div class="row"><label>Master</label><input id="master1"></div>
+<div class="row"><label>Prepaga Master</label><input id="prepagaMaster1"></div>
+<div class="row"><label>MC Debit</label><input id="mcdebit1"></div>
+<div class="row"><label>Visa</label><input id="visa1"></div>
+<div class="row"><label>Visa Débito</label><input id="visadeb1"></div>
+<div class="row"><label>Prepaga Visa</label><input id="prepagaVisa1"></div>
+<div class="row"><label>Amex</label><input id="amex1"></div>
+<div class="row"><label>QR</label><input id="qr1"></div>
+<div class="row"><label>Subtotal</label><input id="subtotal1" class="total" readonly></div>
+</div>
+
+<div class="col">
+<b>Cierre 2</b>
+<div class="row"><label>Master</label><input id="master2"></div>
+<div class="row"><label>Prepaga Master</label><input id="prepagaMaster2"></div>
+<div class="row"><label>MC Debit</label><input id="mcdebit2"></div>
+<div class="row"><label>Visa</label><input id="visa2"></div>
+<div class="row"><label>Visa Débito</label><input id="visadeb2"></div>
+<div class="row"><label>Prepaga Visa</label><input id="prepagaVisa2"></div>
+<div class="row"><label>Amex</label><input id="amex2"></div>
+<div class="row"><label>QR</label><input id="qr2"></div>
+<div class="row"><label>Subtotal</label><input id="subtotal2" class="total" readonly></div>
+</div>
+
+</div>
+
+<div class="row"><label>Total tarjetas</label><input id="totalTarjetas" class="total" readonly></div>
+
+<h3>Efectivo</h3>
+<div class="row"><label>$20.000</label><input id="b20000"></div>
+<div class="row"><label>$10.000</label><input id="b10000"></div>
+<div class="row"><label>$2.000</label><input id="b2000"></div>
+<div class="row"><label>$1.000</label><input id="b1000"></div>
+<div class="row"><label>$500</label><input id="b500"></div>
+<div class="row"><label>$200</label><input id="b200"></div>
+<div class="row"><label>$100</label><input id="b100"></div>
+<div class="row"><label>Cambio</label><input id="cambio"></div>
+<div class="row"><label>Total efectivo</label><input id="efectivo" class="total" readonly></div>
 
 <h3>Otros cobros</h3>
-<input id="transferencias" placeholder="Transferencias">
-<input id="efectivo" placeholder="Efectivo">
-
-<input id="totalCobros" class="total" placeholder="Total cobros" readonly>
+<div class="row"><label>Transferencias</label><input id="transferencias"></div>
+<div class="row"><label>Total cobros</label><input id="totalCobros" class="total" readonly></div>
 
 <h3>Gastos</h3>
-<input id="gasto1_desc" placeholder="Descripción gasto 1">
-<input id="gasto1" placeholder="Importe">
-
-<input id="gasto2_desc" placeholder="Descripción gasto 2">
-<input id="gasto2" placeholder="Importe">
-
-<input id="totalGastos" class="total" placeholder="Total gastos" readonly>
+<div class="row"><label>Gasto 1</label><input id="gasto1"></div>
+<div class="row"><label>Gasto 2</label><input id="gasto2"></div>
+<div class="row"><label>Total gastos</label><input id="totalGastos" class="total" readonly></div>
 
 <h3>Resultado</h3>
-<input id="diferencia" class="total" placeholder="Diferencia" readonly>
+<div class="row"><label>Diferencia</label><input id="diferencia" class="total" readonly></div>
 
 <button onclick="cerrar()">Cerrar turno</button>
 
+<!-- ===== TICKET ===== -->
+<div id="ticket" style="display:none; font-family: monospace; font-size:12px; width:280px;">
+
+  <div style="text-align:center;">
+    <img src="https://marianodys.github.io/Cajas/Para_encabezado.jpg" style="width:200px;"><br>
+    <b>DULCE Y SALADO</b><br>
+    <span id="t_fecha"></span>
+  </div>
+
+  <hr>
+
+  Caja: <span id="t_caja"></span><br>
+  Turno: <span id="t_turno"></span><br>
+  Responsable: <span id="t_resp"></span><br>
+  Tickets: <span id="t_tickets"></span><br>
+
+  <hr>
+
+  Total X: <span id="t_tx"></span><br>
+  Cta Cte: <span id="t_cta"></span><br>
+  Total Caja: <span id="t_tc"></span><br>
+
+  <hr>
+
+  Total Cobros: <span id="t_tco"></span><br>
+  Efectivo: <span id="t_ef"></span><br>
+  Gastos: <span id="t_tg"></span><br>
+
+  <hr>
+
+  <b>Diferencia: <span id="t_dif"></span></b><br>
+  <b id="t_estado"></b>
+
+  <hr>
+
+</div>
+
 <script>
+
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxGfTOvHMNXGB1p8OibVcH7MDCAVwiYAmrlz-kN1PF8DWlTUlnNdJhhpUBNbOe9BtVIzA/exec";
 
 const CAJA = location.pathname.replace("/", "").replace(".html", "");
 document.getElementById("titulo").innerText = "Caja " + CAJA;
 
-function num(id){ return parseFloat(document.getElementById(id).value) || 0; }
+function num(id){
+  let v = document.getElementById(id).value || "";
+  v = v.toString().replace(/\$/g,"").replace(/\s/g,"").replace(/\./g,"").replace(",",".");
+  return parseFloat(v) || 0;
+}
+
+function formatMoney(n){
+  return "$ " + n.toLocaleString("es-AR");
+}
+
+function set(id,val){
+  document.getElementById(id).value = formatMoney(val);
+}
+
+function calcularEfectivo(){
+  const total =
+    num("b20000")*20000 +
+    num("b10000")*10000 +
+    num("b2000")*2000 +
+    num("b1000")*1000 +
+    num("b500")*500 +
+    num("b200")*200 +
+    num("b100")*100 +
+    num("cambio");
+
+  set("efectivo", total);
+}
+
+function tarjetas(p){
+  return num("master"+p)+num("prepagaMaster"+p)+num("mcdebit"+p)+num("visa"+p)+num("visadeb"+p)+num("prepagaVisa"+p)+num("amex"+p)+num("qr"+p);
+}
 
 function calcular(){
 
-  const totalCaja = num("importeX") - num("empleados") - num("pedidosYa");
-  document.getElementById("totalCaja").value = totalCaja;
+  calcularEfectivo();
 
-  const tarjetas = num("master")+num("maestro")+num("mcdebit")+num("visa")+num("visadeb")+num("amex")+num("qr")+num("otras");
-  document.getElementById("subtotalTarjetas").value = tarjetas;
+  const totalX = num("importeX");
+  const ctaCte = num("empleados") + num("pedidosYa");
+  const totalCaja = totalX - ctaCte;
 
-  const totalCobros = tarjetas + num("transferencias") + num("efectivo");
-  document.getElementById("totalCobros").value = totalCobros;
+  set("totalCaja", totalCaja);
 
-  const gastos = num("gasto1") + num("gasto2");
-  document.getElementById("totalGastos").value = gastos;
+  // 🔹 Subtotales por columna
+  const subtotal1 = tarjetas(1);
+  const subtotal2 = tarjetas(2);
 
-  const difSaldo = num("saldoFinal") - num("saldoInicial");
-  const diferencia = difSaldo + gastos + totalCobros - totalCaja;
+  set("subtotal1", subtotal1);
+  set("subtotal2", subtotal2);
 
-  document.getElementById("diferencia").value = diferencia;
+  // 🔹 Total tarjetas
+  const totalTarjetas = subtotal1 + subtotal2;
+  set("totalTarjetas", totalTarjetas);
+
+  // 🔹 Total cobros
+  const totalCobros = totalTarjetas + num("efectivo") + num("transferencias");
+  set("totalCobros", totalCobros);
+
+  // 🔹 Gastos
+  const totalGastos = num("gasto1") + num("gasto2");
+  set("totalGastos", totalGastos);
+
+  // 🔹 Diferencia
+  const dif = (num("saldoFinal") - num("saldoInicial")) + totalGastos + totalCobros - totalCaja;
+  set("diferencia", dif);
 }
 
 document.querySelectorAll("input").forEach(i => i.addEventListener("input", calcular));
 
-function turno(){
-  const h = new Date().getHours();
-  if (h>=7 && h<=17) return "Mañana";
-  if (h>=20 || h<=0) return "Tarde";
-  return "Bloqueado";
+function llenarTicket(data){
+
+  const now = new Date();
+
+  const totalX = num("importeX");
+  const ctaCte = num("empleados") + num("pedidosYa");
+  const totalCaja = totalX - ctaCte;
+  const totalCobros = num("totalCobros");
+  const efectivo = num("efectivo");
+  const totalGastos = num("totalGastos");
+
+  const dif = (num("saldoFinal") - num("saldoInicial")) + totalGastos + totalCobros - totalCaja;
+
+  let estado = "SIN DIFERENCIA";
+  if (dif > 0) estado = "SOBRANTE";
+  if (dif < 0) estado = "FALTANTE";
+
+  document.getElementById("t_fecha").innerText = now.toLocaleString();
+
+  document.getElementById("t_caja").innerText = data.caja;
+  document.getElementById("t_turno").innerText = data.turno;
+  document.getElementById("t_resp").innerText = data.responsable1;
+  document.getElementById("t_tickets").innerText = data.tickets;
+
+  document.getElementById("t_tx").innerText = formatMoney(totalX);
+  document.getElementById("t_cta").innerText = formatMoney(ctaCte);
+  document.getElementById("t_tc").innerText = formatMoney(totalCaja);
+
+  document.getElementById("t_tco").innerText = formatMoney(totalCobros);
+  document.getElementById("t_ef").innerText = formatMoney(efectivo);
+  document.getElementById("t_tg").innerText = formatMoney(totalGastos);
+
+  document.getElementById("t_dif").innerText = formatMoney(dif);
+  document.getElementById("t_estado").innerText = estado;
+}
+
+function imprimirTicket(){
+  const contenido = document.getElementById("ticket").innerHTML;
+  const win = window.open('', '', 'width=300,height=600');
+  win.document.write(`<html><body>${contenido}</body></html>`);
+  win.document.close();
+  win.print();
 }
 
 function cerrar(){
 
-  if(turno()==="Bloqueado"){
-    alert("Horario no permitido");
-    return;
-  }
-
   const data = {
     caja: CAJA,
-    turno: turno(),
+    turno: "Cierre",
     responsable1: document.getElementById("responsable1").value,
-    responsable2: document.getElementById("responsable2").value,
-    saldoInicial: num("saldoInicial"),
-    saldoFinal: num("saldoFinal"),
-    tickets: num("tickets"),
-    totalCaja: num("totalCaja"),
-    totalCobros: num("totalCobros"),
-    totalGastos: num("totalGastos")
+    tickets: num("tickets")
   };
 
-  fetch("https://script.google.com/macros/s/AKfycbzw9M16mqewcMszI1Mey0JduVLSnSH90lxGQN7UgYXUoApVjicxSofUxtjHDvuQs6zVeg/exec", {
-    method: "POST",
+  fetch(SCRIPT_URL,{
+    method:"POST",
     body: JSON.stringify(data)
-  })
-  .then(()=>{
-    alert("Cierre guardado");
-    window.print();
+  }).then(()=>{
+    llenarTicket(data);
+    imprimirTicket();
   });
-
 }
 
 </script>
