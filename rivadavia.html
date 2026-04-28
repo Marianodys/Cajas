@@ -61,7 +61,7 @@ function cerrar() {
     totalGastos: 0
   };
 
-  fetch("PEGAR_URL_APPS_SCRIPT", {
+  fetch("https://script.google.com/macros/s/AKfycbzw9M16mqewcMszI1Mey0JduVLSnSH90lxGQN7UgYXUoApVjicxSofUxtjHDvuQs6zVeg/exec", {
     method: "POST",
     body: JSON.stringify(data)
   })
