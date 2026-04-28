@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Cierre de Caja</title>
+
+<style>
+body { font-family: Arial; max-width: 400px; margin:auto; }
+input { width:100%; margin:5px 0; padding:8px; }
+button { width:100%; padding:10px; margin-top:10px; }
+</style>
+
+</head>
+
+<body>
+
+<h2 id="titulo"></h2>
+
+<input id="responsable1" placeholder="Responsable">
+<input id="responsable2" placeholder="Responsable 2 (solo Kuanip)">
+
+<input id="saldoInicial" placeholder="Saldo inicial">
+<input id="saldoFinal" placeholder="Saldo final">
+
+<input id="tickets" placeholder="Cantidad tickets">
+
+<button onclick="cerrar()">Cerrar turno</button>
+
+<script>
+
+const CAJA = location.pathname.replace("/", "").replace(".html", "");
+
+document.getElementById("titulo").innerText = "Caja " + CAJA;
+
+function turno() {
+  const h = new Date().getHours();
+  if (h >= 7 && h <= 17) return "Mañana";
+  if (h >= 20 || h <= 0) return "Tarde";
+  return "Bloqueado";
+}
+
+function cerrar() {
+
+  const t = turno();
+
+  if (t === "Bloqueado") {
+    alert("Horario no permitido");
+    return;
+  }
+
+  const data = {
+    caja: CAJA,
+    turno: t,
+    responsable1: document.getElementById("responsable1").value,
+    responsable2: document.getElementById("responsable2").value,
+    saldoInicial: parseFloat(document.getElementById("saldoInicial").value),
+    saldoFinal: parseFloat(document.getElementById("saldoFinal").value),
+    tickets: parseInt(document.getElementById("tickets").value),
+    totalCaja: 0,
+    totalCobros: 0,
+    totalGastos: 0
+  };
+
+  fetch("PEGAR_URL_APPS_SCRIPT", {
+    method: "POST",
+    body: JSON.stringify(data)
+  })
+  .then(() => {
+    alert("Cierre guardado");
+    window.print();
+  });
+
+}
+
+</script>
+
+</body>
+</html>
