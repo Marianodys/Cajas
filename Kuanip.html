@@ -184,15 +184,26 @@ function calcular(){
 
   set("totalCaja", totalCaja);
 
-  const totalTarjetas = tarjetas(1) + tarjetas(2);
+  // 🔹 Subtotales por columna
+  const subtotal1 = tarjetas(1);
+  const subtotal2 = tarjetas(2);
+
+  set("subtotal1", subtotal1);
+  set("subtotal2", subtotal2);
+
+  // 🔹 Total tarjetas
+  const totalTarjetas = subtotal1 + subtotal2;
   set("totalTarjetas", totalTarjetas);
 
+  // 🔹 Total cobros
   const totalCobros = totalTarjetas + num("efectivo") + num("transferencias");
   set("totalCobros", totalCobros);
 
+  // 🔹 Gastos
   const totalGastos = num("gasto1") + num("gasto2");
   set("totalGastos", totalGastos);
 
+  // 🔹 Diferencia
   const dif = (num("saldoFinal") - num("saldoInicial")) + totalGastos + totalCobros - totalCaja;
   set("diferencia", dif);
 }
