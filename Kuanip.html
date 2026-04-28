@@ -39,7 +39,6 @@ button { width:100%; padding:10px; margin-top:10px; }
 <div class="row"><label>Importe X</label><input id="importeX"></div>
 <div class="row"><label>Cta cte empleados</label><input id="empleados"></div>
 <div class="row"><label>Pedidos Ya</label><input id="pedidosYa"></div>
-
 <div class="row"><label>Total caja</label><input id="totalCaja" class="total" readonly></div>
 
 <h3>Tarjetas</h3>
@@ -48,7 +47,6 @@ button { width:100%; padding:10px; margin-top:10px; }
 
 <div class="col">
 <b>Cierre 1</b>
-
 <div class="row"><label>Master</label><input id="master1"></div>
 <div class="row"><label>Prepaga Master</label><input id="prepagaMaster1"></div>
 <div class="row"><label>MC Debit</label><input id="mcdebit1"></div>
@@ -57,13 +55,11 @@ button { width:100%; padding:10px; margin-top:10px; }
 <div class="row"><label>Prepaga Visa</label><input id="prepagaVisa1"></div>
 <div class="row"><label>Amex</label><input id="amex1"></div>
 <div class="row"><label>QR</label><input id="qr1"></div>
-
 <div class="row"><label>Subtotal</label><input id="subtotal1" class="total" readonly></div>
 </div>
 
 <div class="col">
 <b>Cierre 2</b>
-
 <div class="row"><label>Master</label><input id="master2"></div>
 <div class="row"><label>Prepaga Master</label><input id="prepagaMaster2"></div>
 <div class="row"><label>MC Debit</label><input id="mcdebit2"></div>
@@ -72,7 +68,6 @@ button { width:100%; padding:10px; margin-top:10px; }
 <div class="row"><label>Prepaga Visa</label><input id="prepagaVisa2"></div>
 <div class="row"><label>Amex</label><input id="amex2"></div>
 <div class="row"><label>QR</label><input id="qr2"></div>
-
 <div class="row"><label>Subtotal</label><input id="subtotal2" class="total" readonly></div>
 </div>
 
@@ -83,16 +78,13 @@ button { width:100%; padding:10px; margin-top:10px; }
 <h3>Otros cobros</h3>
 <div class="row"><label>Transferencias</label><input id="transferencias"></div>
 <div class="row"><label>Efectivo</label><input id="efectivo"></div>
-
 <div class="row"><label>Total cobros</label><input id="totalCobros" class="total" readonly></div>
 
 <h3>Gastos</h3>
 <div class="row"><label>Gasto 1 desc</label><input id="gasto1_desc"></div>
 <div class="row"><label>Gasto 1</label><input id="gasto1"></div>
-
 <div class="row"><label>Gasto 2 desc</label><input id="gasto2_desc"></div>
 <div class="row"><label>Gasto 2</label><input id="gasto2"></div>
-
 <div class="row"><label>Total gastos</label><input id="totalGastos" class="total" readonly></div>
 
 <h3>Resultado</h3>
@@ -101,6 +93,8 @@ button { width:100%; padding:10px; margin-top:10px; }
 <button onclick="cerrar()">Cerrar turno</button>
 
 <script>
+
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx44bJ0VbFuZQBo3vZhHxnjo9DJQrzGcbbBVDTnlPix58muRFJgML8BMBXV6WRMfYJfng/exec";
 
 const CAJA = location.pathname.replace("/", "").replace(".html", "");
 document.getElementById("titulo").innerText = "Caja " + CAJA;
@@ -114,7 +108,7 @@ function formatMoney(n){
   return "$ " + n.toLocaleString("es-AR");
 }
 
-function set(id, val){
+function set(id,val){
   document.getElementById(id).value = formatMoney(val);
 }
 
@@ -157,12 +151,31 @@ function turno(){
   return "Bloqueado";
 }
 
-function cerrar(){
+function cargarSaldo(){
+  fetch(SCRIPT_URL + "?tipo=saldo&caja=" + CAJA)
+  .then(r=>r.json())
+  .then(d=>{
+    document.getElementById("saldoInicial").value = d.saldo;
+    calcular();
+  });
+}
 
-  if(turno()==="Bloqueado"){
-    alert("Horario no permitido");
-    return;
-  }
+function bloquear(){
+  document.querySelectorAll("input").forEach(i => i.disabled = true);
+}
+
+function enviar(data){
+  fetch(SCRIPT_URL,{
+    method:"POST",
+    body: JSON.stringify(data)
+  }).then(()=>{
+    alert("Cierre guardado");
+    bloquear();
+    window.print();
+  });
+}
+
+function cerrar(){
 
   const data = {
     caja: CAJA,
@@ -177,16 +190,27 @@ function cerrar(){
     totalGastos: num("totalGastos")
   };
 
-  fetch("https://script.google.com/macros/s/AKfycbx44bJ0VbFuZQBo3vZhHxnjo9DJQrzGcbbBVDTnlPix58muRFJgML8BMBXV6WRMfYJfng/exec", {
-    method: "POST",
-    body: JSON.stringify(data)
-  })
-  .then(()=>{
-    alert("Cierre guardado");
-    window.print();
-  });
+  if(turno()==="Bloqueado"){
 
+    const clave = prompt("Ingrese clave:");
+
+    fetch(SCRIPT_URL + "?tipo=clave")
+    .then(r=>r.json())
+    .then(d=>{
+      if(clave === d.clave){
+        enviar(data);
+      } else {
+        alert("Clave incorrecta");
+      }
+    });
+
+    return;
+  }
+
+  enviar(data);
 }
+
+window.onload = cargarSaldo;
 
 </script>
 
