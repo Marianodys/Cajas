@@ -19,7 +19,6 @@ input { flex:1; padding:6px; }
 
 button { width:100%; padding:10px; margin-top:10px; }
 </style>
-
 </head>
 
 <body>
@@ -36,13 +35,12 @@ button { width:100%; padding:10px; margin-top:10px; }
 
 <h3>Operación</h3>
 <div class="row"><label>Tickets</label><input id="tickets"></div>
-<div class="row"><label>Importe X</label><input id="importeX"></div>
+<div class="row"><label>Total X</label><input id="importeX"></div>
 <div class="row"><label>Cta cte empleados</label><input id="empleados"></div>
 <div class="row"><label>Pedidos Ya</label><input id="pedidosYa"></div>
 <div class="row"><label>Total caja</label><input id="totalCaja" class="total" readonly></div>
 
 <h3>Tarjetas</h3>
-
 <div class="tarjetas">
 
 <div class="col">
@@ -75,15 +73,23 @@ button { width:100%; padding:10px; margin-top:10px; }
 
 <div class="row"><label>Total tarjetas</label><input id="totalTarjetas" class="total" readonly></div>
 
+<h3>Efectivo</h3>
+<div class="row"><label>$20.000</label><input id="b20000"></div>
+<div class="row"><label>$10.000</label><input id="b10000"></div>
+<div class="row"><label>$2.000</label><input id="b2000"></div>
+<div class="row"><label>$1.000</label><input id="b1000"></div>
+<div class="row"><label>$500</label><input id="b500"></div>
+<div class="row"><label>$200</label><input id="b200"></div>
+<div class="row"><label>$100</label><input id="b100"></div>
+<div class="row"><label>Cambio</label><input id="cambio"></div>
+<div class="row"><label>Total efectivo</label><input id="efectivo" class="total" readonly></div>
+
 <h3>Otros cobros</h3>
 <div class="row"><label>Transferencias</label><input id="transferencias"></div>
-<div class="row"><label>Efectivo</label><input id="efectivo"></div>
 <div class="row"><label>Total cobros</label><input id="totalCobros" class="total" readonly></div>
 
 <h3>Gastos</h3>
-<div class="row"><label>Gasto 1 desc</label><input id="gasto1_desc"></div>
 <div class="row"><label>Gasto 1</label><input id="gasto1"></div>
-<div class="row"><label>Gasto 2 desc</label><input id="gasto2_desc"></div>
 <div class="row"><label>Gasto 2</label><input id="gasto2"></div>
 <div class="row"><label>Total gastos</label><input id="totalGastos" class="total" readonly></div>
 
@@ -117,6 +123,7 @@ button { width:100%; padding:10px; margin-top:10px; }
   <hr>
 
   Total Cobros: <span id="t_tco"></span><br>
+  Efectivo: <span id="t_ef"></span><br>
   Gastos: <span id="t_tg"></span><br>
 
   <hr>
@@ -128,8 +135,6 @@ button { width:100%; padding:10px; margin-top:10px; }
 
 </div>
 
-</div>
-
 <script>
 
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxGfTOvHMNXGB1p8OibVcH7MDCAVwiYAmrlz-kN1PF8DWlTUlnNdJhhpUBNbOe9BtVIzA/exec";
@@ -138,7 +143,8 @@ const CAJA = location.pathname.replace("/", "").replace(".html", "");
 document.getElementById("titulo").innerText = "Caja " + CAJA;
 
 function num(id){
-  let v = document.getElementById(id).value.replace(/\./g,"").replace(",",".");
+  let v = document.getElementById(id).value || "";
+  v = v.toString().replace(/\$/g,"").replace(/\s/g,"").replace(/\./g,"").replace(",",".");
   return parseFloat(v) || 0;
 }
 
@@ -150,66 +156,58 @@ function set(id,val){
   document.getElementById(id).value = formatMoney(val);
 }
 
-function calcTarjetas(p){
+function calcularEfectivo(){
+  const total =
+    num("b20000")*20000 +
+    num("b10000")*10000 +
+    num("b2000")*2000 +
+    num("b1000")*1000 +
+    num("b500")*500 +
+    num("b200")*200 +
+    num("b100")*100 +
+    num("cambio");
+
+  set("efectivo", total);
+}
+
+function tarjetas(p){
   return num("master"+p)+num("prepagaMaster"+p)+num("mcdebit"+p)+num("visa"+p)+num("visadeb"+p)+num("prepagaVisa"+p)+num("amex"+p)+num("qr"+p);
 }
 
 function calcular(){
-  const totalCaja = num("importeX") - num("empleados") - num("pedidosYa");
+
+  calcularEfectivo();
+
+  const totalX = num("importeX");
+  const ctaCte = num("empleados") + num("pedidosYa");
+  const totalCaja = totalX - ctaCte;
+
   set("totalCaja", totalCaja);
 
-  const t1 = calcTarjetas("1");
-  const t2 = calcTarjetas("2");
-
-  set("subtotal1", t1);
-  set("subtotal2", t2);
-
-  const totalTarjetas = t1 + t2;
+  const totalTarjetas = tarjetas(1) + tarjetas(2);
   set("totalTarjetas", totalTarjetas);
 
-  const totalCobros = totalTarjetas + num("transferencias") + num("efectivo");
+  const totalCobros = totalTarjetas + num("efectivo") + num("transferencias");
   set("totalCobros", totalCobros);
 
-  const gastos = num("gasto1") + num("gasto2");
-  set("totalGastos", gastos);
+  const totalGastos = num("gasto1") + num("gasto2");
+  set("totalGastos", totalGastos);
 
-  const difSaldo = num("saldoFinal") - num("saldoInicial");
-  const diferencia = difSaldo + gastos + totalCobros - totalCaja;
-
-  set("diferencia", diferencia);
+  const dif = (num("saldoFinal") - num("saldoInicial")) + totalGastos + totalCobros - totalCaja;
+  set("diferencia", dif);
 }
 
 document.querySelectorAll("input").forEach(i => i.addEventListener("input", calcular));
-
-function turno(){
-  const h = new Date().getHours();
-  if (h>=7 && h<=17) return "Mañana";
-  if (h>=20 || h<=0) return "Tarde";
-  return "Bloqueado";
-}
-
-function cargarSaldo(){
-  fetch(SCRIPT_URL + "?tipo=saldo&caja=" + CAJA)
-  .then(r=>r.json())
-  .then(d=>{
-    document.getElementById("saldoInicial").value = d.saldo;
-    calcular();
-  });
-}
-
-function bloquear(){
-  document.querySelectorAll("input").forEach(i => i.disabled = true);
-}
 
 function llenarTicket(data){
 
   const now = new Date();
 
-  // 🔢 Valores tomados directo del formulario (conversión segura)
   const totalX = num("importeX");
   const ctaCte = num("empleados") + num("pedidosYa");
-  const totalCaja = num("totalCaja");
+  const totalCaja = totalX - ctaCte;
   const totalCobros = num("totalCobros");
+  const efectivo = num("efectivo");
   const totalGastos = num("totalGastos");
 
   const dif = (num("saldoFinal") - num("saldoInicial")) + totalGastos + totalCobros - totalCaja;
@@ -218,93 +216,50 @@ function llenarTicket(data){
   if (dif > 0) estado = "SOBRANTE";
   if (dif < 0) estado = "FALTANTE";
 
-  // 📅 Fecha
   document.getElementById("t_fecha").innerText = now.toLocaleString();
 
-  // 🧾 Datos básicos
   document.getElementById("t_caja").innerText = data.caja;
   document.getElementById("t_turno").innerText = data.turno;
   document.getElementById("t_resp").innerText = data.responsable1;
   document.getElementById("t_tickets").innerText = data.tickets;
 
-  // 💰 Totales
   document.getElementById("t_tx").innerText = formatMoney(totalX);
   document.getElementById("t_cta").innerText = formatMoney(ctaCte);
   document.getElementById("t_tc").innerText = formatMoney(totalCaja);
+
   document.getElementById("t_tco").innerText = formatMoney(totalCobros);
+  document.getElementById("t_ef").innerText = formatMoney(efectivo);
   document.getElementById("t_tg").innerText = formatMoney(totalGastos);
 
-  // 📊 Resultado
   document.getElementById("t_dif").innerText = formatMoney(dif);
   document.getElementById("t_estado").innerText = estado;
 }
 
 function imprimirTicket(){
   const contenido = document.getElementById("ticket").innerHTML;
-
   const win = window.open('', '', 'width=300,height=600');
-
-  win.document.write(`
-    <html>
-    <head>
-      <style>
-        body { font-family: monospace; width:280px; margin:0; }
-      </style>
-    </head>
-    <body>${contenido}</body>
-    </html>
-  `);
-
+  win.document.write(`<html><body>${contenido}</body></html>`);
   win.document.close();
-  win.focus();
   win.print();
-  win.close();
-}
-
-function enviar(data){
-  fetch(SCRIPT_URL,{
-    method:"POST",
-    body: JSON.stringify(data)
-  }).then(()=>{
-    llenarTicket(data);
-    bloquear();
-    imprimirTicket();
-  });
 }
 
 function cerrar(){
 
   const data = {
     caja: CAJA,
-    turno: turno(),
+    turno: "Cierre",
     responsable1: document.getElementById("responsable1").value,
-    responsable2: document.getElementById("responsable2").value,
-    saldoInicial: num("saldoInicial"),
-    saldoFinal: num("saldoFinal"),
-    tickets: num("tickets"),
-    totalCaja: num("totalCaja"),
-    totalCobros: num("totalCobros"),
-    totalGastos: num("totalGastos")
+    tickets: num("tickets")
   };
 
-  if(turno()==="Bloqueado"){
-    const clave = prompt("Ingrese clave:");
-    fetch(SCRIPT_URL + "?tipo=clave")
-    .then(r=>r.json())
-    .then(d=>{
-      if(clave === d.clave){
-        enviar(data);
-      } else {
-        alert("Clave incorrecta");
-      }
-    });
-    return;
-  }
-
-  enviar(data);
+  fetch(SCRIPT_URL,{
+    method:"POST",
+    body: JSON.stringify(data)
+  }).then(()=>{
+    llenarTicket(data);
+    imprimirTicket();
+  });
 }
-
-window.onload = cargarSaldo;
 
 </script>
 
