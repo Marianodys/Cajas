@@ -5,10 +5,18 @@
 <title>Cierre de Caja</title>
 
 <style>
-body { font-family: Arial; max-width: 420px; margin:auto; }
+body { font-family: Arial; max-width: 480px; margin:auto; }
 h3 { border-bottom:1px solid #ccc; }
-input { width:100%; margin:4px 0; padding:6px; }
+
+.row { display:flex; align-items:center; margin:4px 0; }
+label { width:180px; font-size:14px; }
+input { flex:1; padding:6px; }
+
 .total { font-weight:bold; background:#eee; }
+
+.tarjetas { display:flex; gap:10px; }
+.col { flex:1; border:1px solid #ccc; padding:5px; }
+
 button { width:100%; padding:10px; margin-top:10px; }
 </style>
 
@@ -19,50 +27,76 @@ button { width:100%; padding:10px; margin-top:10px; }
 <h2 id="titulo"></h2>
 
 <h3>Responsables</h3>
-<input id="responsable1" placeholder="Responsable">
-<input id="responsable2" placeholder="Responsable 2 (solo Kuanip)">
+<div class="row"><label>Responsable</label><input id="responsable1"></div>
+<div class="row"><label>Responsable 2</label><input id="responsable2"></div>
 
 <h3>Saldos</h3>
-<input id="saldoInicial" placeholder="Saldo inicial">
-<input id="saldoFinal" placeholder="Saldo final">
+<div class="row"><label>Saldo inicial</label><input id="saldoInicial"></div>
+<div class="row"><label>Saldo final</label><input id="saldoFinal"></div>
 
 <h3>Operación</h3>
-<input id="tickets" placeholder="Cantidad tickets">
-<input id="importeX" placeholder="Importe X">
-<input id="empleados" placeholder="Cta cte empleados">
-<input id="pedidosYa" placeholder="Pedidos Ya">
+<div class="row"><label>Tickets</label><input id="tickets"></div>
+<div class="row"><label>Importe X</label><input id="importeX"></div>
+<div class="row"><label>Cta cte empleados</label><input id="empleados"></div>
+<div class="row"><label>Pedidos Ya</label><input id="pedidosYa"></div>
 
-<input id="totalCaja" class="total" placeholder="Total caja" readonly>
+<div class="row"><label>Total caja</label><input id="totalCaja" class="total" readonly></div>
 
 <h3>Tarjetas</h3>
-<input id="master" placeholder="Master">
-<input id="maestro" placeholder="Maestro">
-<input id="mcdebit" placeholder="MC Debit">
-<input id="visa" placeholder="Visa">
-<input id="visadeb" placeholder="Visa Débito">
-<input id="amex" placeholder="Amex">
-<input id="qr" placeholder="QR">
-<input id="otras" placeholder="Otras">
 
-<input id="subtotalTarjetas" class="total" placeholder="Subtotal tarjetas" readonly>
+<div class="tarjetas">
+
+<div class="col">
+<b>Cierre 1</b>
+
+<div class="row"><label>Master</label><input id="master1"></div>
+<div class="row"><label>Prepaga Master</label><input id="prepagaMaster1"></div>
+<div class="row"><label>MC Debit</label><input id="mcdebit1"></div>
+<div class="row"><label>Visa</label><input id="visa1"></div>
+<div class="row"><label>Visa Débito</label><input id="visadeb1"></div>
+<div class="row"><label>Prepaga Visa</label><input id="prepagaVisa1"></div>
+<div class="row"><label>Amex</label><input id="amex1"></div>
+<div class="row"><label>QR</label><input id="qr1"></div>
+
+<div class="row"><label>Subtotal</label><input id="subtotal1" class="total" readonly></div>
+</div>
+
+<div class="col">
+<b>Cierre 2</b>
+
+<div class="row"><label>Master</label><input id="master2"></div>
+<div class="row"><label>Prepaga Master</label><input id="prepagaMaster2"></div>
+<div class="row"><label>MC Debit</label><input id="mcdebit2"></div>
+<div class="row"><label>Visa</label><input id="visa2"></div>
+<div class="row"><label>Visa Débito</label><input id="visadeb2"></div>
+<div class="row"><label>Prepaga Visa</label><input id="prepagaVisa2"></div>
+<div class="row"><label>Amex</label><input id="amex2"></div>
+<div class="row"><label>QR</label><input id="qr2"></div>
+
+<div class="row"><label>Subtotal</label><input id="subtotal2" class="total" readonly></div>
+</div>
+
+</div>
+
+<div class="row"><label>Total tarjetas</label><input id="totalTarjetas" class="total" readonly></div>
 
 <h3>Otros cobros</h3>
-<input id="transferencias" placeholder="Transferencias">
-<input id="efectivo" placeholder="Efectivo">
+<div class="row"><label>Transferencias</label><input id="transferencias"></div>
+<div class="row"><label>Efectivo</label><input id="efectivo"></div>
 
-<input id="totalCobros" class="total" placeholder="Total cobros" readonly>
+<div class="row"><label>Total cobros</label><input id="totalCobros" class="total" readonly></div>
 
 <h3>Gastos</h3>
-<input id="gasto1_desc" placeholder="Descripción gasto 1">
-<input id="gasto1" placeholder="Importe">
+<div class="row"><label>Gasto 1 desc</label><input id="gasto1_desc"></div>
+<div class="row"><label>Gasto 1</label><input id="gasto1"></div>
 
-<input id="gasto2_desc" placeholder="Descripción gasto 2">
-<input id="gasto2" placeholder="Importe">
+<div class="row"><label>Gasto 2 desc</label><input id="gasto2_desc"></div>
+<div class="row"><label>Gasto 2</label><input id="gasto2"></div>
 
-<input id="totalGastos" class="total" placeholder="Total gastos" readonly>
+<div class="row"><label>Total gastos</label><input id="totalGastos" class="total" readonly></div>
 
 <h3>Resultado</h3>
-<input id="diferencia" class="total" placeholder="Diferencia" readonly>
+<div class="row"><label>Diferencia</label><input id="diferencia" class="total" readonly></div>
 
 <button onclick="cerrar()">Cerrar turno</button>
 
@@ -71,26 +105,47 @@ button { width:100%; padding:10px; margin-top:10px; }
 const CAJA = location.pathname.replace("/", "").replace(".html", "");
 document.getElementById("titulo").innerText = "Caja " + CAJA;
 
-function num(id){ return parseFloat(document.getElementById(id).value) || 0; }
+function num(id){
+  let v = document.getElementById(id).value.replace(/\./g,"").replace(",",".");
+  return parseFloat(v) || 0;
+}
+
+function formatMoney(n){
+  return "$ " + n.toLocaleString("es-AR");
+}
+
+function set(id, val){
+  document.getElementById(id).value = formatMoney(val);
+}
+
+function calcTarjetas(prefix){
+  return num("master"+prefix)+num("prepagaMaster"+prefix)+num("mcdebit"+prefix)+num("visa"+prefix)+num("visadeb"+prefix)+num("prepagaVisa"+prefix)+num("amex"+prefix)+num("qr"+prefix);
+}
 
 function calcular(){
 
   const totalCaja = num("importeX") - num("empleados") - num("pedidosYa");
-  document.getElementById("totalCaja").value = totalCaja;
+  set("totalCaja", totalCaja);
 
-  const tarjetas = num("master")+num("maestro")+num("mcdebit")+num("visa")+num("visadeb")+num("amex")+num("qr")+num("otras");
-  document.getElementById("subtotalTarjetas").value = tarjetas;
+  const t1 = calcTarjetas("1");
+  const t2 = calcTarjetas("2");
 
-  const totalCobros = tarjetas + num("transferencias") + num("efectivo");
-  document.getElementById("totalCobros").value = totalCobros;
+  set("subtotal1", t1);
+  set("subtotal2", t2);
+
+  const totalTarjetas = t1 + t2;
+  set("totalTarjetas", totalTarjetas);
+
+  const totalCobros = totalTarjetas + num("transferencias") + num("efectivo");
+  set("totalCobros", totalCobros);
 
   const gastos = num("gasto1") + num("gasto2");
-  document.getElementById("totalGastos").value = gastos;
+  set("totalGastos", gastos);
 
   const difSaldo = num("saldoFinal") - num("saldoInicial");
   const diferencia = difSaldo + gastos + totalCobros - totalCaja;
 
-  document.getElementById("diferencia").value = diferencia;
+  set("diferencia", diferencia);
 }
 
 document.querySelectorAll("input").forEach(i => i.addEventListener("input", calcular));
