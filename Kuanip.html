@@ -51,7 +51,7 @@ button { width:100%; padding:10px; margin-top:10px; }
 <div class="row"><label>Visa</label><input id="visa1"></div>
 <div class="row"><label>Visa Débito</label><input id="visadeb1"></div>
 <div class="row"><label>Prepaga Visa</label><input id="prepagaVisa1"></div>
-<div class="row"><label>Amex</label><input id="amex1"></div>
+<div class="row"><label>Amex / Naranja / Otras</label><input id="amex1"></div>
 <div class="row"><label>QR</label><input id="qr1"></div>
 <div class="row"><label>Subtotal</label><input id="subtotal1" class="total" readonly></div>
 </div>
@@ -64,7 +64,7 @@ button { width:100%; padding:10px; margin-top:10px; }
 <div class="row"><label>Visa</label><input id="visa2"></div>
 <div class="row"><label>Visa Débito</label><input id="visadeb2"></div>
 <div class="row"><label>Prepaga Visa</label><input id="prepagaVisa2"></div>
-<div class="row"><label>Amex</label><input id="amex2"></div>
+<div class="row"><label>Amex / Naranja / Otras</label><input id="amex2"></div>
 <div class="row"><label>QR</label><input id="qr2"></div>
 <div class="row"><label>Subtotal</label><input id="subtotal2" class="total" readonly></div>
 </div>
@@ -137,7 +137,7 @@ button { width:100%; padding:10px; margin-top:10px; }
 
 <script>
 
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwzBsctbm2DVNlrzjZpk-QPMauXRucBFOxVB3eRgYpsI2NGpK7BxzdixYCxAKboW7scwg/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyBMDYJeb6otgBeLhzBX8MfOcTeAjjadDVinUbCWMxh0YOFR0DTQgOInV6_GzEbAwYRKA/exec";
 
 const CAJA = location.pathname.replace("/", "").replace(".html", "");
 document.getElementById("titulo").innerText = "Caja " + CAJA;
@@ -230,8 +230,16 @@ function llenarTicket(data){
   document.getElementById("t_fecha").innerText = now.toLocaleString();
 
   document.getElementById("t_caja").innerText = data.caja;
-  document.getElementById("t_turno").innerText = data.turno;
-  document.getElementById("t_resp").innerText = data.responsable1;
+
+// ✔ Turno correcto (reemplaza la línea existente)
+document.getElementById("t_turno").innerText = data.turno;
+
+// ✔ Responsables (reemplaza la línea existente)
+const resp = [data.responsable1, data.responsable2]
+  .filter(r => r && r.trim() !== "")
+  .join(", ");
+
+document.getElementById("t_resp").innerText = resp;
   document.getElementById("t_tickets").innerText = data.tickets;
 
   document.getElementById("t_tx").innerText = formatMoney(totalX);
@@ -258,7 +266,8 @@ function cerrar(){
 
   const data = {
     caja: CAJA,
-    turno: "Cierre",
+    turno: turno(),
+
     responsable1: document.getElementById("responsable1").value,
     responsable2: document.getElementById("responsable2").value,
 
@@ -269,7 +278,27 @@ function cerrar(){
 
     totalCaja: num("totalCaja"),
     totalCobros: num("totalCobros"),
-    totalGastos: num("totalGastos")
+    totalGastos: num("totalGastos"),
+
+    // 🔹 Tarjetas col 1
+    master1: num("master1"),
+    prepagaMaster1: num("prepagaMaster1"),
+    mcdebit1: num("mcdebit1"),
+    visa1: num("visa1"),
+    visadeb1: num("visadeb1"),
+    prepagaVisa1: num("prepagaVisa1"),
+    amex1: num("amex1"),
+    qr1: num("qr1"),
+
+    // 🔹 Tarjetas col 2
+    master2: num("master2"),
+    prepagaMaster2: num("prepagaMaster2"),
+    mcdebit2: num("mcdebit2"),
+    visa2: num("visa2"),
+    visadeb2: num("visadeb2"),
+    prepagaVisa2: num("prepagaVisa2"),
+    amex2: num("amex2"),
+    qr2: num("qr2")
   };
 
   fetch(SCRIPT_URL,{
