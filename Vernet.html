@@ -137,7 +137,7 @@ button { width:100%; padding:10px; margin-top:10px; }
 
 <script>
 
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxGfTOvHMNXGB1p8OibVcH7MDCAVwiYAmrlz-kN1PF8DWlTUlnNdJhhpUBNbOe9BtVIzA/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwzBsctbm2DVNlrzjZpk-QPMauXRucBFOxVB3eRgYpsI2NGpK7BxzdixYCxAKboW7scwg/exec";
 
 const CAJA = location.pathname.replace("/", "").replace(".html", "");
 document.getElementById("titulo").innerText = "Caja " + CAJA;
@@ -260,7 +260,16 @@ function cerrar(){
     caja: CAJA,
     turno: "Cierre",
     responsable1: document.getElementById("responsable1").value,
-    tickets: num("tickets")
+    responsable2: document.getElementById("responsable2").value,
+
+    saldoInicial: num("saldoInicial"),
+    saldoFinal: num("saldoFinal"),
+
+    tickets: num("tickets"),
+
+    totalCaja: num("totalCaja"),
+    totalCobros: num("totalCobros"),
+    totalGastos: num("totalGastos")
   };
 
   fetch(SCRIPT_URL,{
