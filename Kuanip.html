@@ -138,7 +138,6 @@ button { width:100%; padding:10px; margin-top:10px; }
 <script>
 
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyBMDYJeb6otgBeLhzBX8MfOcTeAjjadDVinUbCWMxh0YOFR0DTQgOInV6_GzEbAwYRKA/exec";
-
 const CAJA = location.pathname.replace("/", "").replace(".html", "");
 document.getElementById("titulo").innerText = "Caja " + CAJA;
 
@@ -184,31 +183,33 @@ function calcular(){
 
   set("totalCaja", totalCaja);
 
-  // 🔹 Subtotales por columna
   const subtotal1 = tarjetas(1);
   const subtotal2 = tarjetas(2);
 
   set("subtotal1", subtotal1);
   set("subtotal2", subtotal2);
 
-  // 🔹 Total tarjetas
   const totalTarjetas = subtotal1 + subtotal2;
   set("totalTarjetas", totalTarjetas);
 
-  // 🔹 Total cobros
   const totalCobros = totalTarjetas + num("efectivo") + num("transferencias");
   set("totalCobros", totalCobros);
 
-  // 🔹 Gastos
   const totalGastos = num("gasto1") + num("gasto2");
   set("totalGastos", totalGastos);
 
-  // 🔹 Diferencia
   const dif = (num("saldoFinal") - num("saldoInicial")) + totalGastos + totalCobros - totalCaja;
   set("diferencia", dif);
 }
 
 document.querySelectorAll("input").forEach(i => i.addEventListener("input", calcular));
+
+function turno(){
+  const h = new Date().getHours();
+  if (h>=7 && h<=17) return "Mañana";
+  if (h>=20 || h<=2) return "Tarde";
+  return "Especial";
+}
 
 function llenarTicket(data){
 
@@ -230,16 +231,11 @@ function llenarTicket(data){
   document.getElementById("t_fecha").innerText = now.toLocaleString();
 
   document.getElementById("t_caja").innerText = data.caja;
+  document.getElementById("t_turno").innerText = data.turno;
 
-// ✔ Turno correcto (reemplaza la línea existente)
-document.getElementById("t_turno").innerText = data.turno;
+  const resp = [data.responsable1, data.responsable2].filter(r => r && r.trim() !== "").join(", ");
+  document.getElementById("t_resp").innerText = resp;
 
-// ✔ Responsables (reemplaza la línea existente)
-const resp = [data.responsable1, data.responsable2]
-  .filter(r => r && r.trim() !== "")
-  .join(", ");
-
-document.getElementById("t_resp").innerText = resp;
   document.getElementById("t_tickets").innerText = data.tickets;
 
   document.getElementById("t_tx").innerText = formatMoney(totalX);
@@ -280,7 +276,6 @@ function cerrar(){
     totalCobros: num("totalCobros"),
     totalGastos: num("totalGastos"),
 
-    // 🔹 Tarjetas col 1
     master1: num("master1"),
     prepagaMaster1: num("prepagaMaster1"),
     mcdebit1: num("mcdebit1"),
@@ -290,7 +285,6 @@ function cerrar(){
     amex1: num("amex1"),
     qr1: num("qr1"),
 
-    // 🔹 Tarjetas col 2
     master2: num("master2"),
     prepagaMaster2: num("prepagaMaster2"),
     mcdebit2: num("mcdebit2"),
