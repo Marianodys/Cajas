@@ -96,7 +96,7 @@ button { width:100%; padding:10px; margin-top:10px; }
 <h3>Resultado</h3>
 <div class="row"><label>Diferencia</label><input id="diferencia" class="total" readonly></div>
 
-<button onclick="cerrar()">Cerrar turno</button>
+<button id="btnCerrar" onclick="cerrar()">Cerrar turno</button>
 
 <!-- ===== TICKET ===== -->
 <div id="ticket" style="display:none; font-family: monospace; font-size:12px; width:280px;">
@@ -136,7 +136,9 @@ button { width:100%; padding:10px; margin-top:10px; }
 </div>
 
 <script>
-
+  
+let enviando = false;
+  
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbza4e9eUoLGFiKOBzTuRQ7ECe8I0H7A55VwLd8rN-tw2KGrE_uUP_D2EBZVvtt5jYi7FA/exec";
 const CAJA = location.pathname.replace("/", "").replace(".html", "");
 document.getElementById("titulo").innerText = "Caja " + CAJA;
@@ -257,8 +259,16 @@ function imprimirTicket(){
   win.document.close();
   win.print();
 }
-
+  
 function cerrar(){
+
+  if(enviando) return; // 🔴 evita doble clic
+
+  enviando = true;
+
+  const btn = document.getElementById("btnCerrar");
+  btn.disabled = true;
+  btn.innerText = "Enviando...";
 
   const data = {
     caja: CAJA,
@@ -298,9 +308,27 @@ function cerrar(){
   fetch(SCRIPT_URL,{
     method:"POST",
     body: JSON.stringify(data)
-  }).then(()=>{
+  })
+  .then(r => r.text())
+  .then(res => {
+
+    if(res === "DUPLICADO"){
+      alert("Este turno ya fue cargado.");
+      btn.disabled = false;
+      btn.innerText = "Cerrar turno";
+      enviando = false;
+      return;
+    }
+
     llenarTicket(data);
     imprimirTicket();
+
+  })
+  .catch(()=>{
+    alert("Error al enviar datos");
+    btn.disabled = false;
+    btn.innerText = "Cerrar turno";
+    enviando = false;
   });
 }
 
