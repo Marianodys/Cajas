@@ -139,7 +139,7 @@ button { width:100%; padding:10px; margin-top:10px; }
 
 let enviando = false;
   
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbza4e9eUoLGFiKOBzTuRQ7ECe8I0H7A55VwLd8rN-tw2KGrE_uUP_D2EBZVvtt5jYi7FA/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwvSWf78WCF0wVLVCYguTmFIzJje70nLthKGQjw3RoNLkIxRb9aOsNJDWjccQ6PPnl1Ng/exec";
 const CAJA = location.pathname.replace("/", "").replace(".html", "");
 document.getElementById("titulo").innerText = "Caja " + CAJA;
 
@@ -269,6 +269,9 @@ function cerrar(){
     responsable1: document.getElementById("responsable1").value,
     responsable2: document.getElementById("responsable2").value,
 
+    efectivo: num("efectivo"),
+    transferencias: num("transferencias"),
+    
     saldoInicial: num("saldoInicial"),
     saldoFinal: num("saldoFinal"),
 
